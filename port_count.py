@@ -18,7 +18,7 @@ if __name__ == '__main__':
         time = log["_source"]['@timestamp']
         ip = log["_source"]['source_ip']
     while len(result["hits"]["hits"]) != 0:
-        uery = {'query': {'term': {'request': 'jsonrpc'}},
+        query = {'query': {'term': {'request': 'jsonrpc'}},
                 'search_after': [time, ip],
                 'sort': [{"@timestamp", "asc"}, {"source_ip", "asc"}]
                 }
