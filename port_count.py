@@ -9,7 +9,7 @@ if __name__ == '__main__':
     n = 0
     i = 0
     query = {'query': {'term': {'request': 'jsonrpc'}},
-             'sort': [{"@timestamp", "asc"}, {"source_ip", "asc"}]
+             'sort': [{"@timestamp": {"order": "asc"}}, {"source_ip": {"order": "asc"}}]
              }
     result = es.search(index="xpot_accesslog-" + year + month[n], body=query, size=100000)
     for log in result["hits"]["hits"]:
@@ -19,9 +19,9 @@ if __name__ == '__main__':
         ip = log["_source"]['source_ip']
     while len(result["hits"]["hits"]) != 0:
         query = {'query': {'term': {'request': 'jsonrpc'}},
-                'search_after': [time, ip],
-                'sort': [{"@timestamp", "asc"}, {"source_ip", "asc"}]
-                }
+                 'search_after': [time, ip],
+                 'sort': [{"@timestamp": {"order": "asc"}}, {"source_ip": {"order": "asc"}}]
+                 }
         result = es.search(index="xpot_accesslog-" + year + month[n], body=query, size=100000)
         for log in result["hits"]["hits"]:
             deport.append(log["_source"]["destination_port"])
