@@ -8,20 +8,21 @@ if __name__ == '__main__':
     month = ['.12', '.01', '.02', '.03', '.04', '.05', '.06', '.07', '.08', '.09', '.10', '.11', '.12']
     n = 0
     i = 0
-    query = {'query':
-                 {'term': {'request': 'jsonrpc'}}
-
+    query = {'query': {'term': {'request': 'jsonrpc'}},
+             'sort': [{"@timestamp", "asc"}, {"source_ip", "asc"}]
              }
-    result = es.search(index="xpot_accesslog-" + year + month[n], body=query, size=100000,
-                       sort=[{"@timestamp", "asc"}, {"source_ip", "asc"}])
+    result = es.search(index="xpot_accesslog-" + year + month[n], body=query, size=100000)
     for log in result["hits"]["hits"]:
         deport.append(log["_source"]["destination_port"])
         deport = list(set(deport))
         time = log["_source"]['@timestamp']
         ip = log["_source"]['source_ip']
     while len(result["hits"]["hits"]) != 0:
-        result = es.search(index="xpot_accesslog-" + year + month[n], body=query, size=100000, search_after=[time, ip],
-                           sort=[{'@timestamp', 'asc'}, {'source_ip', 'asc'}])
+        uery = {'query': {'term': {'request': 'jsonrpc'}},
+                'search_after': [time, ip],
+                'sort': [{"@timestamp", "asc"}, {"source_ip", "asc"}]
+                }
+        result = es.search(index="xpot_accesslog-" + year + month[n], body=query, size=100000)
         for log in result["hits"]["hits"]:
             deport.append(log["_source"]["destination_port"])
             deport = list(set(deport))
